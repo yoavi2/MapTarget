@@ -121,12 +121,6 @@ public class MainActivity extends Activity {
 				}
 				@Override
 				public void onLocationChanged(Location location) {
-					if (!mLocationSet) {
-
-						adjustMap();
-						mLocationSet = true;
-						invalidateOptionsMenu();
-					}
 				}
 				@Override
 				public void onStatusChanged(String provider, int status,
@@ -138,12 +132,12 @@ public class MainActivity extends Activity {
 				@Override
 				public void onMyLocationChange(Location location) {
 
-//					if (!mLocationSet) {
-//
-//						adjustMap();
-//						mLocationSet = true;
-//						invalidateOptionsMenu();
-//					}
+					if (!mLocationSet) {
+
+						adjustMap();
+						mLocationSet = true;
+						invalidateOptionsMenu();
+					}
 				}
 			};
 			this.mMap.setOnMyLocationChangeListener(locationChangeListener);
