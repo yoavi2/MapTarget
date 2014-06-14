@@ -1,0 +1,123 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:onClick="onDistanceFieldClick"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.example.maptarget.SetTargetActivity$PlaceholderFragment" >
+
+    <EditText
+        android:id="@+id/et_distance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/tv_distance"
+        android:layout_alignBottom="@+id/tv_distance"
+        android:layout_alignLeft="@+id/np_azimuth"
+        android:layout_alignRight="@+id/np_azimuth"
+        android:ems="10"
+        android:inputType="number"
+        android:maxLength="4"
+        android:onClick="onDistanceFieldClick" >
+
+        <requestFocus />
+    </EditText>
+
+    <Spinner
+        android:id="@+id/spinner_distance_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/et_distance"
+        android:layout_toRightOf="@+id/et_distance" />
+
+    <NumberPicker
+        android:id="@+id/np_azimuth"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/tv_azimuth"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:id="@+id/btn_cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="19dp"
+        android:onClick="cancel"
+        android:text="@string/text_cancel" />
+
+    <Button
+        android:id="@+id/btn_accept"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/btn_cancel"
+        android:layout_alignBottom="@+id/btn_cancel"
+        android:layout_alignParentLeft="true"
+        android:layout_toLeftOf="@+id/btn_cancel"
+        android:onClick="accept"
+        android:text="@string/text_accept" />
+
+    <EditText
+        android:id="@+id/et_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/tv_name"
+        android:layout_alignLeft="@+id/et_distance"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:onClick="onNameFieldClick" />
+
+    <TextView
+        android:id="@+id/tv_azimuth"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_name"
+        android:layout_marginTop="74dp"
+        android:layout_toLeftOf="@+id/rg_target_type"
+        android:text="@string/text_azimuth" />
+
+    <RadioGroup
+        android:id="@+id/rg_target_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/et_name"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal" >
+
+        <RadioButton
+            android:id="@+id/rb_friend"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="@string/text_friend" />
+
+        <RadioButton
+            android:id="@+id/rb_enemy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/text_enemy" />
+    </RadioGroup>
+
+    <TextView
+        android:id="@+id/tv_distance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/tv_azimuth"
+        android:layout_below="@+id/np_azimuth"
+        android:layout_marginTop="38dp"
+        android:text="@string/text_distance" />
+
+    <TextView
+        android:id="@+id/tv_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/tv_azimuth"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="32dp"
+        android:text="@string/text_name" />
+
+</RelativeLayout>
