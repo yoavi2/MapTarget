@@ -1,6 +1,8 @@
 package com.example.maptarget;
 
 import android.support.v7.app.ActionBarActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
@@ -8,6 +10,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.NumberPicker;
@@ -32,14 +35,17 @@ public class SetTargetActivity extends ActionBarActivity {
 		setContentView(R.layout.activity_set_target);
 
 		this.mETName = (EditText) findViewById(R.id.et_name);
-		
+		this.mETName.requestFocus();
+		getWindow().setSoftInputMode(
+				WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+
 		this.mNPAzimuth = (NumberPicker) findViewById(R.id.np_azimuth);
 		this.mNPAzimuth.setMinValue(0);
 		this.mNPAzimuth.setMaxValue(359);
 		this.mNPAzimuth.setOnLongPressUpdateInterval(10);
 
 		this.mETDistance = (EditText) findViewById(R.id.et_distance);
-
+		
 		this.mSpinnerDistanceUnit = (Spinner) findViewById(R.id.spinner_distance_type);
 		// Create an ArrayAdapter using the string array and a default spinner
 		// layout
@@ -76,38 +82,41 @@ public class SetTargetActivity extends ActionBarActivity {
 	public void accept(View view) {
 
 		// Validation
-		if (this.mETName.getText().toString().trim().isEmpty()){
-			
-Toast.makeText(this, "Name field is mandatory!", Toast.LENGTH_LONG).show();
-			
+		if (this.mETName.getText().toString().trim().isEmpty()) {
+
+			Toast.makeText(this, "Name field is mandatory!", Toast.LENGTH_LONG)
+					.show();
+
 			// Draw pencil
 			Drawable pencil = getResources().getDrawable(R.drawable.pencil2);
-			pencil.setBounds(0, 0, pencil.getIntrinsicWidth(), pencil.getIntrinsicHeight());
+			pencil.setBounds(0, 0, pencil.getIntrinsicWidth(),
+					pencil.getIntrinsicHeight());
 			this.mETName.setCompoundDrawables(null, null, pencil, null);
-			
-		}
-	else if (this.mETDistance.getText().toString().isEmpty()) {
-			
-			Toast.makeText(this, "Distance field is mandatory!", Toast.LENGTH_LONG).show();
-			
+
+		} else if (this.mETDistance.getText().toString().isEmpty()) {
+
+			Toast.makeText(this, "Distance field is mandatory!",
+					Toast.LENGTH_LONG).show();
+
 			// Draw pencil
 			Drawable pencil = getResources().getDrawable(R.drawable.pencil2);
-			pencil.setBounds(0, 0, pencil.getIntrinsicWidth(), pencil.getIntrinsicHeight());
+			pencil.setBounds(0, 0, pencil.getIntrinsicWidth(),
+					pencil.getIntrinsicHeight());
 			this.mETDistance.setCompoundDrawables(null, null, pencil, null);
-			
+
 		} else {
 
 			Intent intent = new Intent(this, MainActivity.class);
 
 			intent.putExtra(EXTRA_NAME, this.mETName.getText().toString());
-			
+
 			intent.putExtra(EXTRA_AZIMUTH, this.mNPAzimuth.getValue());
 
 			int distanceInMeters = Integer
 					.parseInt(((EditText) findViewById(R.id.et_distance))
 							.getText().toString());
 			if (this.mSpinnerDistanceUnit.getSelectedItem().toString()
-					.equals(getString(R.string.text_kilometer))) { 
+					.equals(getString(R.string.text_kilometer))) {
 				distanceInMeters *= 1000;
 			}
 			intent.putExtra(EXTRA_DISTANCE_IN_METERS, distanceInMeters);
@@ -127,13 +136,13 @@ Toast.makeText(this, "Name field is mandatory!", Toast.LENGTH_LONG).show();
 	public void cancel(View view) {
 		finish();
 	}
-	
-public void onDistanceFieldClick(View view){
-	this.mETDistance.setCompoundDrawables(null, null, null, null);
-}
 
-public void onNameFieldClick(View view){
-	this.mETName.setCompoundDrawables(null, null, null, null);
-}
+	public void onDistanceFieldClick(View view) {
+		this.mETDistance.setCompoundDrawables(null, null, null, null);
+	}
+
+	public void onNameFieldClick(View view) {
+		this.mETName.setCompoundDrawables(null, null, null, null);
+	}
 
 }

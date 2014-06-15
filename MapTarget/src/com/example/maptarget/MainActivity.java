@@ -2,12 +2,13 @@ package com.example.maptarget;
 
 import java.util.ArrayList;
 
+import com.example.maptarget.AddTargetOnLocationDialog.AddTargetOnLocationListener;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -22,16 +23,16 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.location.GpsStatus;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-public class MainActivity extends Activity {
+public class MainActivity extends FragmentActivity implements AddTargetOnLocationListener {
 
 	private GoogleMap mMap;
 	private LocationManager mLocationService;
@@ -103,8 +104,18 @@ public class MainActivity extends Activity {
 			this.mMap = ((MapFragment) getFragmentManager().findFragmentById(
 					R.id.map)).getMap();
 			this.mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
-
+			this.mMap.setMyLocationEnabled(true);
 			this.mMarkers = new ArrayList<Marker>();
+			
+			this.mMap.setOnMapLongClickListener(new OnMapLongClickListener() {
+				@Override
+				public void onMapLongClick(LatLng loc) {
+				      android.support.v4.app.FragmentManager fm =  getSupportFragmentManager();
+				      AddTargetOnLocationDialog addTargetDialog =
+				    		  AddTargetOnLocationDialog.newInstance("Add Target", loc);
+				      addTargetDialog.show(fm, AddTargetOnLocationDialog.TAG);
+				}
+			});
 
 			this.mLocationService.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,new android.location.LocationListener() {
 				@Override
@@ -121,17 +132,6 @@ public class MainActivity extends Activity {
 				}
 				@Override
 				public void onLocationChanged(Location location) {
-				}
-				@Override
-				public void onStatusChanged(String provider, int status,
-						Bundle extras) {
-				}
-			});
-
-			GoogleMap.OnMyLocationChangeListener locationChangeListener = new GoogleMap.OnMyLocationChangeListener() {
-				@Override
-				public void onMyLocationChange(Location location) {
-
 					if (!mLocationSet) {
 
 						adjustMap();
@@ -139,11 +139,11 @@ public class MainActivity extends Activity {
 						invalidateOptionsMenu();
 					}
 				}
-			};
-			this.mMap.setOnMyLocationChangeListener(locationChangeListener);
-
-			// Enabling MyLocation Layer of Google Map
-			this.mMap.setMyLocationEnabled(true);
+				@Override
+				public void onStatusChanged(String provider, int status,
+						Bundle extras) {
+				}
+			});
 
 		}
 	}
@@ -219,8 +219,6 @@ public class MainActivity extends Activity {
 					target_type type = (target_type) bundle
 							.getSerializable(SetTargetActivity.EXTRA_TARGET_TYPE);
 
-//					Location currloc = this.mLocationService // TODO: FIX BUG ` IF GPS DISABLED
-//							.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 					Location currloc = this.mMap.getMyLocation();
 
 					com.javadocmd.simplelatlng.LatLng currPoint = new com.javadocmd.simplelatlng.LatLng(
@@ -234,20 +232,7 @@ public class MainActivity extends Activity {
 							destPointLib.getLatitude(),
 							destPointLib.getLongitude());
 
-					Marker destMark = this.mMap.addMarker(new MarkerOptions()
-							.position(destPointGoogle).title(name)
-							.snippet(type.toString()));
-
-					if (type == MainActivity.target_type.FRIEND) {
-						destMark.setIcon(BitmapDescriptorFactory
-								.fromResource(R.drawable.friend));
-					} else {
-						destMark.setIcon(BitmapDescriptorFactory
-								.fromResource(R.drawable.enemy));
-					}
-
-					this.mMarkers.add(destMark);
-
+					this.addMarkerOnLocation(name, type, destPointGoogle);
 					this.adjustMap();
 
 					break;
@@ -286,5 +271,23 @@ public class MainActivity extends Activity {
 
 		}
 	}
+	
+	 public void addMarkerOnLocation(String name, target_type type, LatLng loc) {
 
+		Marker destMark = this.mMap
+				.addMarker(new MarkerOptions().position(loc)
+						.title(name).snippet(type.toString()));
+
+		if (type == MainActivity.target_type.FRIEND) {
+			destMark.setIcon(BitmapDescriptorFactory
+					.fromResource(R.drawable.friend));
+		} else {
+			destMark.setIcon(BitmapDescriptorFactory
+					.fromResource(R.drawable.enemy));
+		}
+
+		destMark.showInfoWindow();
+		this.mMarkers.add(destMark);
+		  
+		 }
 }
