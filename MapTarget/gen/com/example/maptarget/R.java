@@ -1499,6 +1499,7 @@ containing a value of this type.
         public static final int dialog=0x7f070021;
         public static final int disableHome=0x7f07001b;
         public static final int dropdown=0x7f070022;
+        public static final int edit_marker=0x7f07005d;
         public static final int edit_query=0x7f070042;
         public static final int end=0x7f070025;
         public static final int et_distance=0x7f07004f;
@@ -1530,6 +1531,7 @@ containing a value of this type.
         public static final int radio=0x7f070041;
         public static final int rb_enemy=0x7f07005a;
         public static final int rb_friend=0x7f070059;
+        public static final int remove_marker=0x7f07005e;
         public static final int rg_target_type=0x7f070058;
         public static final int sandbox=0x7f070008;
         public static final int satellite=0x7f070002;
@@ -1622,7 +1624,8 @@ containing a value of this type.
     }
     public static final class menu {
         public static final int main=0x7f0d0000;
-        public static final int set_target=0x7f0d0001;
+        public static final int marker_menu=0x7f0d0001;
+        public static final int set_target=0x7f0d0002;
     }
     public static final class string {
         /**  Content description for the action bar "home" affordance. [CHAR LIMIT=NONE] 
@@ -1665,6 +1668,8 @@ containing a value of this type.
         /**  Description of a share target (both in the list of such or the default share button) in a ShareActionProvider (share UI). [CHAR LIMIT=NONE] 
          */
         public static final int abc_shareactionprovider_share_with_application=0x7f05002b;
+        public static final int action_delete_marker=0x7f05003a;
+        public static final int action_edit_marker=0x7f050039;
         public static final int action_settings=0x7f05002e;
         public static final int app_name=0x7f05002d;
         public static final int auth_client_needs_enabling_title=0x7f050001;

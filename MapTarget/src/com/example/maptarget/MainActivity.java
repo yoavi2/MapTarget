@@ -28,11 +28,17 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.FragmentActivity;
+import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
-public class MainActivity extends FragmentActivity implements AddTargetOnLocationListener {
+public class MainActivity extends FragmentActivity implements
+		AddTargetOnLocationListener {
 
 	private GoogleMap mMap;
 	private LocationManager mLocationService;
@@ -52,34 +58,31 @@ public class MainActivity extends FragmentActivity implements AddTargetOnLocatio
 
 		this.mLocationService = (LocationManager) getSystemService(LOCATION_SERVICE);
 
-		//  Build gps alert
+		// Build gps alert
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Location Services Not Active");
 		builder.setMessage("Please enable Location Services and GPS");
-		builder.setPositiveButton("OK",
-				new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialogInterface,
-							int i) {
-						// Show location settings when the user acknowledges
-						// the alert dialog
-						Intent intent = new Intent(
-								Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-						startActivity(intent);
-					}
-				});
+		builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialogInterface, int i) {
+				// Show location settings when the user acknowledges
+				// the alert dialog
+				Intent intent = new Intent(
+						Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+				startActivity(intent);
+			}
+		});
 		builder.setNegativeButton("Exit",
 				new DialogInterface.OnClickListener() {
 					@Override
-					public void onClick(DialogInterface dialogInterface,
-							int i) {
+					public void onClick(DialogInterface dialogInterface, int i) {
 						// Exit Application
 						finish();
 					}
 				});
 		this.mGpsDialog = builder.create();
 		this.mGpsDialog.setCanceledOnTouchOutside(false);
-		
+
 		// Check if enabled and if not send user to the GPS settings
 		if (!this.mLocationService
 				.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
@@ -106,50 +109,63 @@ public class MainActivity extends FragmentActivity implements AddTargetOnLocatio
 			this.mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
 			this.mMap.setMyLocationEnabled(true);
 			this.mMarkers = new ArrayList<Marker>();
-			
+
 			this.mMap.setOnMapLongClickListener(new OnMapLongClickListener() {
 				@Override
 				public void onMapLongClick(LatLng loc) {
-				      android.support.v4.app.FragmentManager fm =  getSupportFragmentManager();
-				      AddTargetOnLocationDialog addTargetDialog =
-				    		  AddTargetOnLocationDialog.newInstance("Add Target", loc);
-				      addTargetDialog.show(fm, AddTargetOnLocationDialog.TAG);
+					android.support.v4.app.FragmentManager fm = getSupportFragmentManager();
+					AddTargetOnLocationDialog addTargetDialog = AddTargetOnLocationDialog
+							.newInstance("Add Target", loc);
+					addTargetDialog.show(fm, AddTargetOnLocationDialog.TAG);
 				}
 			});
+				
+			this.mMap
+					.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+						@Override
+						public void onInfoWindowClick(Marker marker) {
+							registerForContextMenu(getCurrentFocus());
+						}
+					});
 
-			this.mLocationService.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,new android.location.LocationListener() {
-				@Override
-				public void onProviderEnabled(String provider) {
-					if (mGpsDialog.isShowing()) {
-						mGpsDialog.dismiss();
-					}
-				}
-				@Override
-				public void onProviderDisabled(String provider) {
-					if (!mLocationSet) {
-						mGpsDialog.show();
-					}
-				}
-				@Override
-				public void onLocationChanged(Location location) {
-					if (!mLocationSet) {
+			this.mLocationService.requestLocationUpdates(
+					LocationManager.GPS_PROVIDER, 0, 0,
+					new android.location.LocationListener() {
+						@Override
+						public void onProviderEnabled(String provider) {
+							if (mGpsDialog.isShowing()) {
+								mGpsDialog.dismiss();
+							}
+						}
 
-						adjustMap();
-						mLocationSet = true;
-						invalidateOptionsMenu();
-					}
-				}
-				@Override
-				public void onStatusChanged(String provider, int status,
-						Bundle extras) {
-				}
-			});
+						@Override
+						public void onProviderDisabled(String provider) {
+							if (!mLocationSet) {
+								mGpsDialog.show();
+							}
+						}
+
+						@Override
+						public void onLocationChanged(Location location) {
+							if (!mLocationSet) {
+
+								adjustMap();
+								mLocationSet = true;
+								invalidateOptionsMenu();
+							}
+						}
+
+						@Override
+						public void onStatusChanged(String provider,
+								int status, Bundle extras) {
+						}
+					});
 
 		}
 	}
 
 	@Override
-	protected void onRestart() { 
+	protected void onRestart() {
 
 		// Check if location set and if enabled and if not send user to the GPS
 		// settings
@@ -245,11 +261,11 @@ public class MainActivity extends FragmentActivity implements AddTargetOnLocatio
 
 		Location location = this.mLocationService
 				.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-		
+
 		if (location == null) {
 			location = this.mMap.getMyLocation();
 		}
-		
+
 		LatLng loc = new LatLng(location.getLatitude(), location.getLongitude());
 		mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(loc, 16.0f));
 
@@ -271,12 +287,11 @@ public class MainActivity extends FragmentActivity implements AddTargetOnLocatio
 
 		}
 	}
-	
-	 public void addMarkerOnLocation(String name, target_type type, LatLng loc) {
 
-		Marker destMark = this.mMap
-				.addMarker(new MarkerOptions().position(loc)
-						.title(name).snippet(type.toString()));
+	public void addMarkerOnLocation(String name, target_type type, LatLng loc) {
+
+		Marker destMark = this.mMap.addMarker(new MarkerOptions().position(loc)
+				.title(name).snippet(type.toString()));
 
 		if (type == MainActivity.target_type.FRIEND) {
 			destMark.setIcon(BitmapDescriptorFactory
@@ -288,6 +303,26 @@ public class MainActivity extends FragmentActivity implements AddTargetOnLocatio
 
 		destMark.showInfoWindow();
 		this.mMarkers.add(destMark);
-		  
-		 }
+
+	}
+
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v,
+			ContextMenuInfo menuInfo) {
+		super.onCreateContextMenu(menu, v, menuInfo);
+		MenuInflater m = getMenuInflater();
+		m.inflate(R.menu.marker_menu, menu);
+	}
+
+	 @Override  
+	   public boolean onContextItemSelected(MenuItem item) {  
+	        switch(item.getItemId()){  
+	             case R.id.edit_marker:  
+	                  AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();  
+	                  
+	                  
+	                  return true;  
+	        }  
+	        return super.onContextItemSelected(item);  
+	   }  
 }

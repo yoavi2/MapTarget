@@ -19,5 +19,8 @@
     <string name="text_friend">Friend</string>
     <string name="text_accept">Accept</string>
     <string name="text_cancel">Cancel</string>
+    
+    <string name="action_edit_marker">Edit Marker</string>
+    <string name="action_delete_marker">Delete Marker</string>
 
 </resources>
