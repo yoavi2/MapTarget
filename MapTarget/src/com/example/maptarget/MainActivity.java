@@ -8,6 +8,7 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
 import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
@@ -19,16 +20,20 @@ import com.javadocmd.simplelatlng.LatLngTool;
 import com.javadocmd.simplelatlng.util.LengthUnit;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.FragmentActivity;
 import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
@@ -41,6 +46,7 @@ public class MainActivity extends FragmentActivity implements
 		AddTargetOnLocationListener {
 
 	private GoogleMap mMap;
+	public View mViewInfoWindow;
 	private LocationManager mLocationService;
 	private ArrayList<Marker> mMarkers;
 	private boolean mLocationSet = false;
@@ -54,7 +60,7 @@ public class MainActivity extends FragmentActivity implements
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
+		setContentView(R.layout.activity_google_main);
 
 		this.mLocationService = (LocationManager) getSystemService(LOCATION_SERVICE);
 
@@ -74,6 +80,7 @@ public class MainActivity extends FragmentActivity implements
 		});
 		builder.setNegativeButton("Exit",
 				new DialogInterface.OnClickListener() {
+			
 					@Override
 					public void onClick(DialogInterface dialogInterface, int i) {
 						// Exit Application
@@ -119,12 +126,14 @@ public class MainActivity extends FragmentActivity implements
 					addTargetDialog.show(fm, AddTargetOnLocationDialog.TAG);
 				}
 			});
-				
+			
+			this.mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter());
+			
 			this.mMap
 					.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
 						@Override
 						public void onInfoWindowClick(Marker marker) {
-							registerForContextMenu(getCurrentFocus());
+						
 						}
 					});
 
@@ -311,18 +320,62 @@ public class MainActivity extends FragmentActivity implements
 			ContextMenuInfo menuInfo) {
 		super.onCreateContextMenu(menu, v, menuInfo);
 		MenuInflater m = getMenuInflater();
-		m.inflate(R.menu.marker_menu, menu);
+//		m.inflate(R.menu.marker_menu, menu);
 	}
 
 	 @Override  
 	   public boolean onContextItemSelected(MenuItem item) {  
-	        switch(item.getItemId()){  
-	             case R.id.edit_marker:  
-	                  AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();  
-	                  
-	                  
-	                  return true;  
-	        }  
+//	        switch(item.getItemId()){  
+//	             case R.id.edit_marker:  
+//	                  AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();  
+//	                  
+//	                  
+//	                  return true;  
+//	        }  
 	        return super.onContextItemSelected(item);  
 	   }  
+	 
+	 private class CustomInfoWindowAdapter implements InfoWindowAdapter {
+		 
+		    private View view;
+
+		    public CustomInfoWindowAdapter() {
+		        view = getLayoutInflater().inflate(R.layout.view_infowindow,
+		                null);
+		    }
+
+	        @Override
+	        public View getInfoContents(Marker marker) {
+	            return null;
+	        }
+	 
+	        @Override
+	        public View getInfoWindow(final Marker marker) {
+		     
+	            final ImageView image = ((ImageView) view.findViewById(R.id.badge));
+	            image.setImageResource(R.drawable.ic_launcher);
+	            final String title = marker.getTitle();
+	            final TextView titleUi = ((TextView) view.findViewById(R.id.title));
+	            if (title != null) {
+	                titleUi.setText(title);
+	            } else {
+	                titleUi.setText("");
+	            }
+	 
+	            final String snippet = marker.getSnippet();
+	            final TextView snippetUi = ((TextView) view
+	                    .findViewById(R.id.snippet));
+	            if (snippet != null) {
+	                snippetUi.setText(snippet);
+	            } else {
+	                snippetUi.setText("");
+	            }
+	 
+//	            registerForContextMenu(view);
+	            MainActivity.this.mViewInfoWindow = view;
+	            
+	            return view;
+	        }
+	    }
 }
+
