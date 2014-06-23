@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+         <RadioGroup
+             android:id="@+id/rg_target_type"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_below="@+id/et_name"
+             android:layout_centerHorizontal="true"
+             android:layout_marginTop="22dp"
+             android:orientation="horizontal" >
+
+             <RadioButton
+                 android:id="@+id/rb_friend"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:checked="true"
+                 android:text="@string/text_friend" />
+
+             <RadioButton
+                 android:id="@+id/rb_enemy"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:text="@string/text_enemy" />
+         </RadioGroup>
+
+         <EditText
+             android:id="@+id/et_name"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_alignBottom="@+id/tv_name"
+             android:layout_alignLeft="@+id/rg_target_type"
+             android:ems="10"
+             android:inputType="textPersonName"
+             android:onClick="onNameFieldClick" />
+
+         <Button
+             android:id="@+id/btn_accept"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_alignParentLeft="true"
+             android:layout_below="@+id/rg_target_type"
+             android:layout_marginTop="21dp"
+             android:layout_toLeftOf="@+id/btn_cancel"
+             android:text="@string/text_accept" />
+
+         <Button
+             android:id="@+id/btn_cancel"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_alignBaseline="@+id/btn_accept"
+             android:layout_alignBottom="@+id/btn_accept"
+             android:layout_alignParentRight="true"
+             android:text="@string/text_cancel" />
+
+         <TextView
+             android:id="@+id/tv_name"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_alignParentTop="true"
+             android:layout_marginRight="18dp"
+             android:layout_marginTop="32dp"
+             android:layout_toLeftOf="@+id/et_name"
+             android:text="@string/text_name" />
+
+</RelativeLayout>
